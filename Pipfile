@@ -7,6 +7,7 @@ name = "pypi"
 uvicorn = "*"
 fastapi = "*"
 sqlmodel = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
 
 [dev-packages]
 
