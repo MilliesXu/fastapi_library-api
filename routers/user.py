@@ -1,5 +1,7 @@
+from service.Service import Service
 from fastapi import APIRouter, status, HTTPException
 from service.UserService import UserService
+from utils.Errror import Error
 
 import schemas
 
@@ -15,9 +17,35 @@ async def create_user(request: schemas.User):
 
         return await service.create(request)
     except Exception as ex:
-        error_dict = ex.__dict__
+        error = Error(ex)
+        error.raise_error()
 
-        if len(error_dict) > 0:
-            raise HTTPException(error_dict['status_code'], error_dict['detail'])
-        else:
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Something wrong in the server')
+@router.get('/', status_code=status.HTTP_200_OK, response_model=list[schemas.ShowUser])
+async def get_all_user():
+    try:
+        service = UserService()
+
+        return await service.get_all()
+    except Exception as ex:
+        error = Error(ex)
+        error.raise_error()
+
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowUser)
+async def get_user(id: int):
+    try:
+        service = UserService()
+
+        return await service.get_one(id)
+    except Exception as ex:
+        error = Error(ex)
+        error.raise_error()
+
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=schemas.ShowUser)
+async def update_user(id: int, request: schemas.EditUser):
+    try:
+        service = UserService()
+
+        return await service.update(id, request)
+    except Exception as ex:
+        error = Error(ex)
+        error.raise_error()
