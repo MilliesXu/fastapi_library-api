@@ -28,22 +28,19 @@ class Database:
 
             return session.exec(statement).all()
 
-    async def get_by_params(self, object: object, id: int):
+    async def get_by_id(self, object: object, id: int):
         with Session(self._engine) as session:
-            statement = select(object).where(object.id == id)
+            result = session.get(object, id)
 
-            return session.exec(statement).first()
+            return result
 
     async def update(self, object: object, object_update: object, id: int):
         with Session(self._engine) as session:
-            statement = select(object).where(object.id == id)
+            result = session.get(object, id)
+            attributes = object_update.dict(exclude_unset=True)
 
-            result = session.exec(statement).one()
-            attributes = object_update.__dict__.items()
-
-            for attribute, value in attributes:
-                if (hasattr(result, attribute)):
-                    setattr(result, attribute, value)
+            for attribute, value in attributes.items():
+                setattr(result, attribute, value)
 
             session.add(result)
             session.commit()
@@ -54,8 +51,9 @@ class Database:
 
     async def delete(self, object: object, id: int):
         with Session(self._engine) as session:
-            statement = select(object).where(object.id == id)
-
-            result = session.exec(statement).one()
+            result = session.get(object, id)
 
             session.delete(result)
+            session.commit()
+
+            return {"Detail": "Success Deleted"}

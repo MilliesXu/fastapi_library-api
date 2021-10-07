@@ -3,7 +3,7 @@ from fastapi import APIRouter, status, HTTPException
 from service.UserService import UserService
 from utils.Errror import Error
 
-import schemas
+import models
 
 router = APIRouter(
     prefix = '/user',
@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
-async def create_user(request: schemas.User):
+async def create_user(request: models.UserCreate):
     try:
         service = UserService()
 
@@ -20,7 +20,7 @@ async def create_user(request: schemas.User):
         error = Error(ex)
         error.raise_error()
 
-@router.get('/', status_code=status.HTTP_200_OK, response_model=list[schemas.ShowUser])
+@router.get('/', status_code=status.HTTP_200_OK, response_model=list[models.UserShow])
 async def get_all_user():
     try:
         service = UserService()
@@ -30,7 +30,7 @@ async def get_all_user():
         error = Error(ex)
         error.raise_error()
 
-@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowUser)
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=models.UserShow)
 async def get_user(id: int):
     try:
         service = UserService()
@@ -40,8 +40,8 @@ async def get_user(id: int):
         error = Error(ex)
         error.raise_error()
 
-@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=schemas.ShowUser)
-async def update_user(id: int, request: schemas.EditUser):
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=models.UserBase)
+async def update_user(id: int, request: models.UserBase):
     try:
         service = UserService()
 
@@ -49,3 +49,14 @@ async def update_user(id: int, request: schemas.EditUser):
     except Exception as ex:
         error = Error(ex)
         error.raise_error()
+
+@router.delete('/{id}', status_code=status.HTTP_202_ACCEPTED)
+async def delete_user(id: int):
+    try:
+        service = UserService()
+
+        return await service.delete(id)
+    except Exception as ex:
+        error = Error(ex)
+        error.raise_error()
+

@@ -1,8 +1,8 @@
 from config.Database import Database
 
 class Service:
-    def __init__(self) -> None:
-        self._db = Database()
+    def __init__(self, db: Database) -> None:
+        self._db = db()
 
     async def create():
         pass

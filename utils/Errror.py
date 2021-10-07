@@ -7,7 +7,7 @@ class Error:
     def raise_error(self):
         error_dict = self.__exception.__dict__
 
-        if len(error_dict) > 0:
+        if error_dict.get('status_code'):
             raise HTTPException(error_dict['status_code'], error_dict['detail'])
         else:
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, \
