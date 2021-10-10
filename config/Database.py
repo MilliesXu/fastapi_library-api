@@ -1,8 +1,12 @@
 from sqlmodel import create_engine, SQLModel, Session, select
+from dotenv import load_dotenv
+
+import os
 
 class Database:
     def __init__(self) -> None:
-        self.__SQLALCHEMY_DATABASE_URL = 'sqlite:///./database.db'
+        load_dotenv('.env')
+        self.__SQLALCHEMY_DATABASE_URL = os.getenv('DATABASE_URL')
         self._engine = create_engine(
             self.__SQLALCHEMY_DATABASE_URL,
             connect_args={

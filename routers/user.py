@@ -1,7 +1,8 @@
-from service.Service import Service
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status
+from fastapi.param_functions import Depends
 from service.UserService import UserService
-from utils.Errror import Error
+from service.AuthenticateService import AuthenticateService
+from utils.Error import Error
 
 import models
 
@@ -9,6 +10,8 @@ router = APIRouter(
     prefix = '/user',
     tags = ['Users'],
 )
+
+authenticate = AuthenticateService()
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 async def create_user(request: models.UserCreate):
@@ -21,7 +24,7 @@ async def create_user(request: models.UserCreate):
         error.raise_error()
 
 @router.get('/', status_code=status.HTTP_200_OK, response_model=list[models.UserShow])
-async def get_all_user():
+async def get_all_user(get_current_user: models.User = Depends(authenticate.get_current_user)):
     try:
         service = UserService()
 
